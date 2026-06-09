@@ -20,9 +20,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'is_admin',
-        'is_revisor',
-        'is_writer'
+        //UNSECURE perche permette di modificare i ruoli
+        // 'is_admin',
+        // 'is_revisor',
+        // 'is_writer'
     ];
 
     /**
