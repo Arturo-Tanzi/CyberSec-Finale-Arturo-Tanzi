@@ -4,9 +4,12 @@ namespace App\Providers;
 
 use App\Models\Category;
 use App\Models\Tag;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Http\Request;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,6 +26,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        RateLimiter::for('article-search', function (Request $request) {
+        return Limit::perMinute(10)->by($request->ip());
+        });
         if(Schema::hasTable('categories')){
             $categories = Category::all();
             View::share(['categories' => $categories]);
