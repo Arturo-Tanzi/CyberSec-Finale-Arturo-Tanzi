@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Exception;
+use App\Models\Category;
 use App\Models\Tag;
 use App\Models\User;
-use App\Models\Category;
-use Illuminate\Http\Request;
 use App\Services\HttpService;
-use Illuminate\Support\Facades\Log;
+use App\Services\SecurityLogger;
+use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class AdminController extends Controller
 {
@@ -54,25 +55,40 @@ class AdminController extends Controller
         return view('admin.dashboard', compact('adminRequests', 'revisorRequests', 'writerRequests','financialData'));
     }
 
-    public function setAdmin(User $user){
-        $user->is_admin = true;
-        $user->save();
+    public function setAdmin(User $user)
+{
+    $user->is_admin = true;
+    $user->save();
 
-        return redirect(route('admin.dashboard'))->with('message', "$user->name is now administrator");
-    }
+    SecurityLogger::log('ROLE_CHANGE_ADMIN', auth()->user(), [
+        'target_user_id' => $user->id
+    ]);
 
-    public function setRevisor(User $user){
+    return back();
+}
+
+        public function setRevisor(User $user)
+    {
         $user->is_revisor = true;
         $user->save();
 
-        return redirect(route('admin.dashboard'))->with('message', "$user->name is now revisor");
+        SecurityLogger::log('ROLE_CHANGE_REVISOR', auth()->user(), [
+            'target_user_id' => $user->id
+        ]);
+
+        return back();
     }
 
-    public function setWriter(User $user){
+    public function setWriter(User $user)
+    {
         $user->is_writer = true;
         $user->save();
 
-        return redirect(route('admin.dashboard'))->with('message', "$user->name is now writer");
+        SecurityLogger::log('ROLE_CHANGE_WRITER', auth()->user(), [
+            'target_user_id' => $user->id
+        ]);
+
+        return back();
     }
 
     public function editTag(Request $request, Tag $tag){
