@@ -21,8 +21,8 @@ class LatestNews extends Component
     {
         if (filter_var($this->selectedApi, FILTER_VALIDATE_URL) === FALSE) {
             $this->news = 'Invalid URL';
-            return;
-        }
+        return;
+}
 
         $this->news = json_decode($this->httpService->getRequest($this->selectedApi), true);
 

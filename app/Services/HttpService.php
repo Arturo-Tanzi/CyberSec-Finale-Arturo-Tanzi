@@ -4,6 +4,7 @@ namespace App\Services;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use Illuminate\Support\Facades\Auth;
 
 class HttpService
 {
@@ -21,6 +22,13 @@ class HttpService
     public function getRequest($url)
     {
         $parsedUrl = parse_url($url);
+        if ($parsedUrl['host'] === 'internal.finance') {
+
+        if (!Auth::user()?->isAdmin()) {
+            return 'Unauthorized';
+        }
+
+    }
 
         // Validate protocol
         if (!in_array($parsedUrl['scheme'], $this->allowedProtocols)) {
